@@ -1,13 +1,25 @@
+import sys
+from PIL import Image
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from io import BytesIO
+
 User = get_user_model()
 
 
-class Category(models.Model):
+class MinResolutionErrorException(Exception):
+    pass
 
+
+class MaxResolutionErrorException(Exception):
+    pass
+
+
+class Category(models.Model):
     name = models.CharField(max_length=255, verbose_name='Имя категории')
     slug = models.SlugField(unique=True)
 
@@ -37,10 +49,13 @@ class LatestProductsManager:
 
 
 class LatestProducts:
-
     objects = LatestProductsManager()
 
+
 class Product(models.Model):
+    MIN_RESOLUTION = (400, 400)
+    MAX_RESOLUTION = (800, 800)
+    MAX_IMAGE_SIZE = 3145728
 
     class Meta:
         abstract = True
@@ -55,9 +70,31 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    # def save(self, *args, **kwargs):
+    #     image = self.image
+    #     img = Image.open(image)
+    #     min_height, min_width = self.MIN_RESOLUTION
+    #     max_height, max_width = self.MAX_RESOLUTION
+    #     if img.height < min_height or img.width < min_width:
+    #         raise MinResolutionErrorException('Разрешение изображения меньше минимального')
+    #     if img.height > max_height or img.width > max_width:
+    #         raise MaxResolutionErrorException('Разрешение изображения больше максимального')
+    #     image = self.image
+    #     img = Image.open(image)
+    #     new_img = img.convert('RGB')
+    #     resized_new_img = new_img.resize((200, 200), Image.ANTIALIAS)
+    #     filestream = BytesIO()
+    #     file_ = resized_new_img.save(filestream, 'JPEG', quality=90)
+    #     filestream.seek(0)
+    #     name = '.'.format(*self.image.name.split('.'))
+    #     self.image = InMemoryUploadedFile(
+    #         filestream, 'ImageField', name, 'jped/image', sys.getsizeof(file_), None
+    #     )
+    #
+    #     super().save(*args, **kwargs)
+
 
 class CartProduct(models.Model):
-
     user = models.ForeignKey('Customer', verbose_name='Покупатель', on_delete=models.CASCADE)
     cart = models.ForeignKey('Cart', verbose_name='Корзина', on_delete=models.CASCADE, related_name='related_products')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -71,7 +108,6 @@ class CartProduct(models.Model):
 
 
 class Cart(models.Model):
-
     owner = models.ForeignKey('Customer', verbose_name='Владелец', on_delete=models.CASCADE)
     products = models.ManyToManyField(CartProduct, blank=True, related_name='related_cart')
     total_products = models.PositiveIntegerField(default=0)
@@ -89,6 +125,7 @@ class Customer(models.Model):
     def __str__(self):
         return "Покупатель {} {}".format(self.user.first_name, self.user.last_name)
 
+
 class Notebook(Product):
     diagonal = models.CharField(max_length=255, verbose_name='Диагональ')
     display = models.CharField(max_length=255, verbose_name='Тип матрицы')
@@ -99,6 +136,7 @@ class Notebook(Product):
 
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
+
 
 class Smartphone(Product):
     diagonal = models.CharField(max_length=255, verbose_name='Диагональ')
@@ -113,5 +151,3 @@ class Smartphone(Product):
 
     def __str__(self):
         return "{} : {}".format(self.category.name, self.title)
-
-
