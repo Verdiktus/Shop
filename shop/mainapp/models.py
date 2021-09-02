@@ -162,4 +162,5 @@ class Smartphone(Product):
         return "{} : {}".format(self.category.name, self.title)
 
     def get_absolute_url(self):
+        # print(get_product_url(self, 'product_detail'))
         return get_product_url(self, 'product_detail')
