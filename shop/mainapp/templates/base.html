@@ -43,17 +43,34 @@
                 </div>
             </div>
         </nav>
+
         <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Shop in style</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+        <div class="container">
+
+           <div class="row">
+
+                <div class="col-lg-3">
+                    <h1 class="my-4">ShopName</h1>
+                    <div class="list-group">
+                    <a href="#" class="list-group-item">Category 1</a>
+                    <a href="#" class="list-group-item">Category 2</a>
+                    <a href="#" class="list-group-item">Category 3</a>
+                    </div>
+
                 </div>
-            </div>
-        </header>
+
+<!--        <header class="bg-dark py-5">-->
+<!--            <div class="container px-4 px-lg-5 my-5">-->
+<!--                <div class="text-center text-white">-->
+<!--                    <h1 class="display-4 fw-bolder">Shop in style</h1>-->
+<!--                    <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </header>-->
         <!-- Section-->
+            {% block content %}
         <section class="py-5">
+
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     <div class="col mb-5">
@@ -253,8 +270,14 @@
                         </div>
                     </div>
                 </div>
+                </div>
+
+            </section>
+               {% endblock content %}
+           </div>
+
+
             </div>
-        </section>
         <!-- Footer-->
         <footer class="py-5 bg-dark">
             <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
